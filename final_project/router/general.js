@@ -6,10 +6,10 @@ const public_users = express.Router();
 
 
 public_users.post("/register", (req,res) => {
-    const username = req.query.username;
-    const password = req.query.password;  
+    const username = req.body.username;
+    const password = req.body.password;
     if (username && password) {
-        if (!doesExist(username)) { 
+        if (!isValid(username)) { 
             users.push({"username":username,"password":password});
             return res.status(200).json({message: "User successfully registred. Now you can login"});
         } else {
@@ -25,29 +25,37 @@ public_users.get('/',function (req, res) {
 
 public_users.get('/isbn/:isbn',function (req, res) {
     const isbn = req.params.isbn;
-    res.send(books[isbn]);
+    res.send(JSON.stringify(books[isbn], null, 3));
  });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
     const author = req.params.author;
-    return books.filter((book)=>{
-        return (book.author === author)
-    });
+    let booksArray = [];
+    for(var id in books){
+        if(books[id].author === author) {
+            booksArray.push(books[id]);
+        }
+    }
+    res.send(JSON.stringify(booksArray, null, 3))
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
     const title = req.params.title;
-    return books.filter((book)=>{
-        return (book.title === title)
-    });
+    let booksArray = [];
+    for(var id in books){
+        if(books[id].title === title) {
+            booksArray.push(books[id]);
+        }
+    }
+    res.send(JSON.stringify(booksArray, null, 3))
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
     const isbn = req.params.isbn;
-    res.send(books[isbn].reviews);
+    res.send(JSON.stringify(books[isbn].reviews));
 });
 
 module.exports.general = public_users;
